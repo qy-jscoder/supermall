@@ -1,93 +1,75 @@
 <template>
-  <div class="goods-item" @click="itemClicktoId">
-    <img :src="showImage" alt=""  @load="imageLoad"/>
-    <div class="goods-info">
-      <p>{{ goodsItem.title }}</p>
-      <span class="price">{{ goodsItem.price }}</span>
-      <span class="collect">{{ goodsItem.cfav }}</span>
+  <div class="goods-list-item" @click="handleSkipDetail(itemgood.iid)">
+    <img v-lazy="imgPath" alt="" @load="handleGoodsListImg" />
+    <div class="goods-list-item-info">
+      <p class="info-title">{{ itemgood.title }}</p>
+      <span class="info-price">¥{{ itemgood.price }}</span>
+      <span class="info-collect">{{ itemgood.cfav }}</span>
     </div>
   </div>
 </template>
+
 <script>
 export default {
-  name: "GoodsListItem",
   props: {
-    goodsItem: {
+    itemgood: {
       type: Object,
       default() {
         return {};
       },
     },
   },
-  //详情信息页的推荐部分，没有show，所以用计算属性来处理
-  computed:{
-    showImage(){
-      return this.goodsItem.image||this.goodsItem.show.img
-    }
-  },
-  methods:{
-    //加载完一个图片就会执行
-    imageLoad(){  
-        this.$bus.$emit('itemImageLoad')
-        
-        this.$bus.$emit('detailimgLoad')
-        
+  computed: {
+    imgPath() {
+      return this.itemgood.img || this.itemgood.image || this.itemgood.show.img;
     },
-    //点击商品跳转到详情界面，需要返回，用push
-    itemClicktoId(){
-      //路由跳转到对应界面，且可以返回
-      this.$router.push('/detail/'+this.goodsItem.iid)
-      
-    }
-  }
+  },
+  methods: {
+    handleGoodsListImg() {
+      this.$bus.$emit("itemImageLoad");
+    },
+    handleSkipDetail(iid) {
+      this.$router.push("/detail/" + iid);
+    },
+  },
 };
 </script>
 <style scoped>
-.goods-item {
-  padding-bottom: 40px;
-  position: relative;
-
-  width: 48%;
-}
-
-.goods-item img {
-  width: 100%;
-  border-radius: 5px;
-}
-
-.goods-info {
-  font-size: 12px;
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  right: 0;
-  overflow: hidden;
+.goods-list-item {
+  width: 47%;
+  margin-top: 10px;
   text-align: center;
+  font-size: 12px;
 }
-
-.goods-info p {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.goods-list-item img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 5px;
+}
+.goods-list-item-info .info-title {
   white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
   margin-bottom: 3px;
+  font-weight: 700;
 }
-
-.goods-info .price {
-  color: var(--color-high-text);
+.goods-list-item-info .info-price {
   margin-right: 20px;
+  color: var(--color-high-text);
 }
-
-.goods-info .collect {
+.goods-list-item-info .info-collect {
   position: relative;
 }
-
-.goods-info .collect::before {
+.goods-list-item-info .info-collect::before {
   content: "";
   position: absolute;
+  top: 0;
+  bottom: 0;
   left: -15px;
-  top: -1px;
-  width: 14px;
-  height: 14px;
-  background: url("~assets/img/common/collect.svg") 0 0/14px 14px;
+  height: 15px;
+  width: 15px;
+  margin: auto 0;
+  background-image: url("~assets/img/common/collect.svg");
+  background-size: 100% 100%;
 }
 </style>

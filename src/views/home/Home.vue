@@ -33,7 +33,7 @@
         @tabClick="tabClick"
         ref="tabControlOffsetTop2"
       ></TabControl>
-      <GoodsList :goods="showGoods"></GoodsList>
+      <GoodsList :listItem="showGoods"></GoodsList>
     </Scroll>
 
     <BackTop @click.native="backClick" v-show="isShowBackTop"></BackTop>
@@ -50,7 +50,7 @@ import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
 import BackTop from "components/content/backTop/BackTop";
 
-import { getHomeMultidata, getHomeGoods } from "network/home";
+import { getHomeMultidata, getHomeGoods,getCategory } from "network/home";
 import { debounce } from "common/utils";
 export default {
   name: "Home",
@@ -95,6 +95,7 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+
   },
   mounted() {
     //防抖操作

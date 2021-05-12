@@ -16,3 +16,8 @@ export function getHomeGoods(type,page){
         }
     })
 }
+export function getCategory(){
+    return request({
+        url:'/category'
+    })
+}

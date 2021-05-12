@@ -4,7 +4,7 @@
         <!-- <goods-list :goods="recommend"></goods-list> -->
         <div class="recommend-item">
             <div v-for="(item,index) in recommend" :key="index" class="good-item">
-                <img :src="item.image" class="good-img" @load="imageLoad">
+                <img v-lazy="item.image" class="good-img" @load="imageLoad">
                 <div class="good-info">
                     <p class="good-title">{{item.title}}</p> 
                     <span class="good-price">￥{{item.price}}</span>

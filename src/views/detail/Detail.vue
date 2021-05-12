@@ -5,7 +5,13 @@
       @DetailNavItemClick="DetailNavItemClick"
       ref="detailnav"
     ></DetailNavBar>
-    <Scroll class="content" :pullUpload="true" ref="scrolldetail" :probeType="3" @scroll="detailscroll">
+    <Scroll
+      class="content"
+      :pullUpload="true"
+      ref="scrolldetail"
+      :probeType="3"
+      @scroll="detailscroll"
+    >
       <DetailSwiper
         :topImages="topImages"
         @swiperLoad="swiperLoad"
@@ -26,14 +32,15 @@
         @RecommendImageLoad="RecommendImageLoad"
         ref="recommendInfo"
       ></DetailRecommend>
-      
     </Scroll>
     <DetailBottomBar @addCart="addCart"></DetailBottomBar>
     <BackTop @click.native="backClick" v-show="isShowBackTop"></BackTop>
+    <Toast class="detailToast" :message="message" :isShow="toastShow"></Toast>
   </div>
 </template>
 <script>
 import DetailNavBar from "./childCompoments/DetailNavBar";
+
 import {
   getDetail,
   GoodInfo,
@@ -53,7 +60,9 @@ import BackTop from "components/content/backTop/BackTop";
 
 import { debounce } from "common/utils";
 
+import Toast from "components/common/toast/Toast";
 import Scroll from "components/common/scroll/Scroll";
+
 export default {
   name: "Detail",
   data() {
@@ -68,9 +77,11 @@ export default {
       commentInfo: {},
       recommends: [],
       themeTops: [],
-      currentIndex:0,
+      currentIndex: 0,
       isShowBackTop: false,
-      scrollDefinePosition:1000
+      scrollDefinePosition: 1000,
+      message: "",
+      toastShow: false,
     };
   },
   created() {
@@ -128,7 +139,8 @@ export default {
     DetailCommentInfo,
     DetailRecommend,
     DetailBottomBar,
-    BackTop
+    BackTop,
+    Toast,
   },
   methods: {
     swiperLoad() {
@@ -153,7 +165,7 @@ export default {
       this.themeTops.push(this.$refs.paramInfo.$el.offsetTop);
       this.themeTops.push(this.$refs.commentInfo.$el.offsetTop);
       this.themeTops.push(this.$refs.recommendInfo.$el.offsetTop);
-      this.themeTops.push(Number.MAX_VALUE)
+      this.themeTops.push(Number.MAX_VALUE);
     },
     //详情界面推荐图片区加载
     RecommendImageLoad() {
@@ -171,22 +183,26 @@ export default {
     },
     //利用scroll组件发射来的事件，来实时监听当前滚动位置。
     //滚动到什么地方，navbar就显示对应的标题
-    detailscroll(position){
-      const positionY=-position.y
-      
-      let length=this.themeTops.length
-      
-      for(let i =0;i<length-1;i++){
-        if(this.currentIndex!=i&&(positionY>=this.themeTops[i]&&positionY<this.themeTops[i+1])){
-            this.currentIndex=i
-           
-            this.$refs.detailnav.currentIndex=this.currentIndex
+    detailscroll(position) {
+      const positionY = -position.y;
+
+      let length = this.themeTops.length;
+
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex != i &&
+          positionY >= this.themeTops[i] &&
+          positionY < this.themeTops[i + 1]
+        ) {
+          this.currentIndex = i;
+
+          this.$refs.detailnav.currentIndex = this.currentIndex;
         }
       }
-      this.onTimeWatch(position)
+      this.onTimeWatch(position);
     },
     //实时监听 当前高度
-    onTimeWatch(position){
+    onTimeWatch(position) {
       this.isShowBackTop = -position.y > this.scrollDefinePosition;
     },
     //回到顶部按钮
@@ -194,18 +210,32 @@ export default {
       //调用scroll组件中的scrollToself方法
       this.$refs.scrolldetail.scrollToself(0, 0);
     },
-    addCart(){
+    addCart() {
       //获取购物车需要展示的信息
-      const good={}
-      good.image=this.topImages[0]
-      good.title=this.goods.title
-      good.desc=this.goods.desc
-      good.price=this.goods.newPrice
-      good.iid=this.iid
+      const good = {};
+      good.image = this.topImages[0];
+      good.title = this.goods.title;
+      good.desc = this.goods.desc;
+      good.price = this.goods.realPrice;
+      good.iid = this.iid;
       //将商品添加到购物车里
-      
-    }
-  }
+      console.log(good.price);
+
+      this.$store.dispatch("addCartvuex", good).then((res) => {
+        this.toastShow = true;
+        this.message = res;
+      });
+      setTimeout(()=>{
+        this.toastShow = false;
+        this.message = '';
+      },1000)
+      //通过映射来调用actions中方法
+      //...mapActions(["addCart"]),
+      // this.addCart(good).then((res) => {
+      //   console.log(res);
+      // });
+    },
+  },
 };
 </script>
 <style scoped>

@@ -4,7 +4,7 @@ import vueRouter from 'vue-router'
 
 const Home = () => import('../views/home/Home')
 const Category = () => import('../views/category/Category')
-const Cart = () => import('../views/cart/Shopcart')
+const Cart = () => import('../views/cart/Cart')
 const Profile = () => import('../views/profile/Profile')
 const Detail = () => import('../views/detail/Detail')
 vue.use(vueRouter)
@@ -42,5 +42,9 @@ const router =new vueRouter({
     routes,
     mode:'history'
 })
+
+
+//解决连续点击同一个路由报错问题
+
 
 export default router
