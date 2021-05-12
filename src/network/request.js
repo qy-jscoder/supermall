@@ -2,7 +2,9 @@ import axios from 'axios'
 
 export function request(config){
     const instance = axios.create({
-        baseURL: "http://152.136.185.210:7878/api/m5",
+        //想要接口的，请自己添加coderwhy老师微信购买
+        //讲诚信，答应了不向外传接口
+        baseURL: "http://xxxxxx/xxxxx/xxx",
         timeout: 5000
       })
       //请求拦截
